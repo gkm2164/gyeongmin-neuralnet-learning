@@ -20,7 +20,7 @@ public class NeuralNetNode {
         weight = new double[weightCount];
         deltaWeight = new double[weightCount];
 
-        Array.set(weight, 0, 1.0);
+        Array.set(weight, 0, 0.5);
         Array.set(deltaWeight, 0, 0.0);
     }
 
@@ -52,7 +52,7 @@ public class NeuralNetNode {
             sum += node.nodeError * node.weight[nodeID];
         }
 
-        this.nodeError = nodeValue * (1 - nodeValue) * sum;
+        nodeError = nodeValue * (1 - nodeValue) * sum;
         updateWeight(previousLayer, learningRate, momentumTerm);
     }
 
@@ -62,7 +62,7 @@ public class NeuralNetNode {
         for (int i = 0; i < nodes.length; i++) {
             double oldDelta = deltaWeight[i];
             deltaWeight[i] = learningRate * nodeError * nodes[i].nodeValue;
-            weight[i] = weight[i] + deltaWeight[i] + (momentumTerm * oldDelta);
+            weight[i] = weight[i] + deltaWeight[i] + momentumTerm * oldDelta;
         }
     }
 
@@ -72,9 +72,5 @@ public class NeuralNetNode {
 
     public double getNodeValue() {
         return nodeValue;
-    }
-
-    public int getNodeID() {
-        return nodeID;
     }
 }

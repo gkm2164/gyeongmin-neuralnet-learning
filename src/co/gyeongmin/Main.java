@@ -5,36 +5,39 @@ import co.gyeongmin.neuralnet.NeuralNetLearning;
 public class Main {
 
     public static void main(String[] args) {
+        /*double[][] inputs = { { 0.0, 0.0 }, { 0.0, 1.0 }, { 1.0, 0.0 }, { 1.0, 1.0 } };
+        double[] answer = { 0.0, 1.0, 1.0, 0.0 };*/
+
         double[] inputs = { 0.0, 1.0, 5.0, 9.0, 10.0 };
         double[] answer = { 1.0, 2.0, 3.0, 4.0, 5.0 };
 
-        NeuralNetLearning neuralNetLearning = new NeuralNetLearning(0.45, 0.9, new int[]{ 11, 11, 11, 11, 11 }, 1, 1);
+        NeuralNetLearning neuralNetLearning = new NeuralNetLearning(0.45, 0.9, new int[]{ 10, 10, 10 }, 1, 1);
 
-            int iterate = 1000;
+            int iterate = 1000000;
             while (iterate-- > 0) {
-                for (int i = 0; i < 5; i++) {
-                    neuralNetLearning.forward(new double[]{convertIntoPoint(inputs[i], 0, 10)});
-                    neuralNetLearning.backPropagate(new double[]{pointToValue(answer[i], 1, 5)});
+                for (int i = 0; i < inputs.length; i++) {
+                    double scaleInput = toScale(inputs[i], 0.0, 10.0);
+                    double scaleAnswer = toScale(answer[i], 0.0, 5.0);
+                    neuralNetLearning.forward(new double[]{ scaleInput });
+                    neuralNetLearning.backPropagate(new double[]{ scaleAnswer });
                 }
             }
 
-        for (int i = 0; i < 11; i++) {
-            neuralNetLearning.forward(new double[]{ convertIntoPoint(i, 0, 10) });
+        for (int i = 0; i < 10; i++) {
+            double scaleInput = toScale(i, 0.0, 10.0);
+            neuralNetLearning.forward(new double[]{ scaleInput });
             double[] retVal = neuralNetLearning.getOutput();
-            System.out.println("(" + i + ")" + "Return: " + pointToValue(retVal[0], 1, 5));
+            //int out = (int)Math.round(retVal[0]);
+            //System.out.println("(" + inputs[i][0] + ", " + inputs[i][1] + ")" + "Return: " + out);
+            System.out.println("f(" + i + ") = " + fromScale(retVal[0], 0.0, 5.0));
         }
     }
 
-    public static double convertIntoPoint(double value, double min, double max) {
-        double val = value - min;
-        double range = max - min;
-
-        return val / range;
+    public static double toScale(double value, double min, double max) {
+        return (value - min) / (max - min);
     }
 
-    public static double pointToValue(double ptr, double min, double max) {
-        double range = max - min;
-        double val = ptr * range;
-        return val + min;
+    public static double fromScale(double value, double min, double max) {
+        return (value * (max - min)) + min;
     }
 }

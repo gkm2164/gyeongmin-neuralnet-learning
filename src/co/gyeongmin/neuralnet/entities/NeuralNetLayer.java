@@ -31,6 +31,24 @@ public class NeuralNetLayer {
         return nodes;
     }
 
+    public void forward(double[] values,
+                        SigmoidFunction sigmoidFunction) {
+        for (int i = 0; i < nodes.length; i++) {
+            nodes[i].setNodeValue(values[i]);
+        }
+
+        nextLayer.forward(sigmoidFunction);
+    }
+
+    public void backPropagate(double[] desiredValue,
+                              double learningRate, double momentumTerm) {
+        for (int i = 0; i < nodes.length; i++) {
+            nodes[i].backPropagate(desiredValue[i], prevLayer, learningRate, momentumTerm);
+        }
+
+        prevLayer.backPropagate(learningRate, momentumTerm);
+    }
+
     private void forward(SigmoidFunction sigmoidFunction) {
         for (NeuralNetNode node : nodes) {
             node.forward(prevLayer, sigmoidFunction);
@@ -41,30 +59,12 @@ public class NeuralNetLayer {
         }
     }
 
-    public void forward(double[] values,
-                        SigmoidFunction sigmoidFunction) {
-        for (int i = 0; i < nodes.length; i++) {
-            nodes[i].setNodeValue(values[i]);
-        }
-
-        nextLayer.forward(sigmoidFunction);
-    }
-
-    public void backPropagate(double[] desiredValue, double learningRate, double momentumTerm) {
-        for (int i = 0; i < nodes.length; i++) {
-            nodes[i].backPropagate(desiredValue[i], prevLayer, learningRate, momentumTerm);
-        }
-
-        prevLayer.backPropagate(learningRate, momentumTerm);
-    }
-
     private void backPropagate(double learningRate, double momentumTerm) {
-        if (prevLayer == null) {
-            return;
-        }
+        if (prevLayer == null) return;
 
         for (NeuralNetNode node : nodes) {
-            node.backPropagate(nextLayer, prevLayer, learningRate, momentumTerm);
+            node.backPropagate(nextLayer, prevLayer,
+                               learningRate, momentumTerm);
         }
 
         prevLayer.backPropagate(learningRate, momentumTerm);
