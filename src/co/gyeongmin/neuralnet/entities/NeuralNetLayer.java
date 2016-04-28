@@ -4,11 +4,11 @@ package co.gyeongmin.neuralnet.entities;
  * Created by USER on 2016-04-28.
  */
 public class NeuralNetLayer {
-    final int layerID;
-    final NeuralNetNode[] nodes;
+    private final NeuralNetNode[] nodes;
+    private NeuralNetLayer prevLayer = null;
+    private NeuralNetLayer nextLayer = null;
 
-    public NeuralNetLayer(int layerID, int numNodes) {
-        this.layerID = layerID;
+    public NeuralNetLayer(int numNodes) {
         this.nodes = new NeuralNetNode[numNodes];
 
         for (int i = 0; i < numNodes; i++) {
@@ -16,10 +16,14 @@ public class NeuralNetLayer {
         }
     }
 
-    public void connectLayer(NeuralNetLayer previousLayer) {
+    public void connectPreviousLayer(NeuralNetLayer previousLayer) {
+        this.prevLayer = previousLayer;
+        prevLayer.setNextLayer(this);
+
         int numPreviousLayerNode = previousLayer.nodes.length;
-        for (int i = 0; i < nodes.length; i++) {
-            nodes[i].setWeightCount(numPreviousLayerNode);
+
+        for (NeuralNetNode node : nodes) {
+            node.setWeightCount(numPreviousLayerNode);
         }
     }
 
@@ -27,35 +31,46 @@ public class NeuralNetLayer {
         return nodes;
     }
 
-    public void forward(NeuralNetLayer previousLayer, SigmoidFunction sigmoidFunction) {
-        for (NeuralNetNode node: nodes) {
-            node.forward(previousLayer, sigmoidFunction);
+    private void forward(SigmoidFunction sigmoidFunction) {
+        for (NeuralNetNode node : nodes) {
+            node.forward(prevLayer, sigmoidFunction);
+        }
+
+        if (nextLayer != null) {
+            nextLayer.forward(sigmoidFunction);
         }
     }
 
-    public void setWeightCount(int weightCount) {
-        for (int i = 0; i < nodes.length; i++) {
-            nodes[i].setWeightCount(weightCount);
-        }
-    }
-
-    public void forward(double[] values) {
+    public void forward(double[] values,
+                        SigmoidFunction sigmoidFunction) {
         for (int i = 0; i < nodes.length; i++) {
             nodes[i].setNodeValue(values[i]);
         }
+
+        nextLayer.forward(sigmoidFunction);
     }
 
-    public void backPropagate(double[] desiredValue,
-                              NeuralNetLayer previousLayer, double learningRate, double momentumTerm) {
+    public void backPropagate(double[] desiredValue, double learningRate, double momentumTerm) {
         for (int i = 0; i < nodes.length; i++) {
-            nodes[i].backPropagate(desiredValue[i], previousLayer, learningRate, momentumTerm);
+            nodes[i].backPropagate(desiredValue[i], prevLayer, learningRate, momentumTerm);
         }
+
+        prevLayer.backPropagate(learningRate, momentumTerm);
     }
 
-    public void backPropagate(NeuralNetLayer nextLayer,
-                              NeuralNetLayer previousLayer, double learningRate, double momentumTerm) {
-        for (int i = 0; i < nodes.length; i++) {
-            nodes[i].backPropagate(nextLayer, previousLayer, learningRate, momentumTerm);
+    private void backPropagate(double learningRate, double momentumTerm) {
+        if (prevLayer == null) {
+            return;
         }
+
+        for (NeuralNetNode node : nodes) {
+            node.backPropagate(nextLayer, prevLayer, learningRate, momentumTerm);
+        }
+
+        prevLayer.backPropagate(learningRate, momentumTerm);
+    }
+
+    public void setNextLayer(NeuralNetLayer nextLayer) {
+        this.nextLayer = nextLayer;
     }
 }

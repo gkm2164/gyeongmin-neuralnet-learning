@@ -12,11 +12,11 @@ public class NeuralNetNode {
     private double[] weight;
     private double[] deltaWeight;
 
-    public NeuralNetNode(int nodeID) {
+    NeuralNetNode(int nodeID) {
         this.nodeID = nodeID;
     }
 
-    public void setWeightCount(int weightCount) {
+    void setWeightCount(int weightCount) {
         weight = new double[weightCount];
         deltaWeight = new double[weightCount];
 
@@ -24,7 +24,7 @@ public class NeuralNetNode {
         Array.set(deltaWeight, 0, 0.0);
     }
 
-    public void forward(NeuralNetLayer previousLayer, SigmoidFunction sigmoidFunction) {
+    void forward(NeuralNetLayer previousLayer, SigmoidFunction sigmoidFunction) {
         NeuralNetNode[] nodes = previousLayer.getNodes();
 
         double sum = 0.0;
@@ -36,27 +36,27 @@ public class NeuralNetNode {
         this.nodeValue = sigmoidFunction.calculate(sum);
     }
 
-    public void backPropagate(double desiredValue,
-                              NeuralNetLayer previousLayer, double learningRate, double momentumTerm) {
+    void backPropagate(double desiredValue, NeuralNetLayer previousLayer,
+                       double learningRate, double momentumTerm) {
         nodeError = nodeValue * (1 - nodeValue) * (desiredValue - nodeValue);
         updateWeight(previousLayer, learningRate, momentumTerm);
     }
 
-    public void backPropagate(NeuralNetLayer nextLayer,
-                              NeuralNetLayer previousLayer, double learningRate, double momentumTerm) {
+    void backPropagate(NeuralNetLayer nextLayer, NeuralNetLayer previousLayer,
+                       double learningRate, double momentumTerm) {
         NeuralNetNode[] nodes = nextLayer.getNodes();
 
         this.nodeError = 0.0;
 
-        for (int i = 0; i < nodes.length; i++) {
-            this.nodeError = nodes[i].nodeError * nodes[i].weight[nodeID];
+        for (NeuralNetNode node : nodes) {
+            this.nodeError = node.nodeError * node.weight[nodeID];
         }
 
         updateWeight(previousLayer, learningRate, momentumTerm);
     }
 
-    public void updateWeight(NeuralNetLayer previousLayer, double learningRate, double momentumTerm) {
-        NeuralNetNode[] nodes = previousLayer.nodes;
+    private void updateWeight(NeuralNetLayer previousLayer, double learningRate, double momentumTerm) {
+        NeuralNetNode[] nodes = previousLayer.getNodes();
 
         for (int i = 0; i < nodes.length; i++) {
             double oldDelta = deltaWeight[i];
@@ -65,7 +65,7 @@ public class NeuralNetNode {
         }
     }
 
-    public void setNodeValue(double nodeValue) {
+    void setNodeValue(double nodeValue) {
         this.nodeValue = nodeValue;
     }
 
