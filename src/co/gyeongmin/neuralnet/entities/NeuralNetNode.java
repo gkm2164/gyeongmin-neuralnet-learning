@@ -46,12 +46,13 @@ public class NeuralNetNode {
                        double learningRate, double momentumTerm) {
         NeuralNetNode[] nodes = nextLayer.getNodes();
 
-        this.nodeError = 0.0;
+        double sum = 0.0;
 
         for (NeuralNetNode node : nodes) {
-            this.nodeError = node.nodeError * node.weight[nodeID];
+            sum += node.nodeError * node.weight[nodeID];
         }
 
+        this.nodeError = nodeValue * (1 - nodeValue) * sum;
         updateWeight(previousLayer, learningRate, momentumTerm);
     }
 
@@ -71,5 +72,9 @@ public class NeuralNetNode {
 
     public double getNodeValue() {
         return nodeValue;
+    }
+
+    public int getNodeID() {
+        return nodeID;
     }
 }
