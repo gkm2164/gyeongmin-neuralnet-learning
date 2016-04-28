@@ -73,4 +73,14 @@ public class NeuralNetLayer {
     public void setNextLayer(NeuralNetLayer nextLayer) {
         this.nextLayer = nextLayer;
     }
+
+    public void showNetStat() {
+        for (int i = 0; i < nodes.length; i++) {
+            nodes[i].showWeights(nodes + ", " + i + " :: ");
+        }
+
+        if (nextLayer != null) {
+            nextLayer.showNetStat();
+        }
+    }
 }

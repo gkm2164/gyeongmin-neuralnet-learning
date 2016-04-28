@@ -55,4 +55,8 @@ public class NeuralNetLearning {
 
         return ret;
     }
+
+    public void showNetStat() {
+        inputLayer.showNetStat();
+    }
 }

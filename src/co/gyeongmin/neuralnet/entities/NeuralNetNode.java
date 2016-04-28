@@ -1,6 +1,8 @@
 package co.gyeongmin.neuralnet.entities;
 
 import java.lang.reflect.Array;
+import java.time.Instant;
+import java.util.Random;
 
 /**
  * Created by USER on 2016-04-28.
@@ -20,7 +22,18 @@ public class NeuralNetNode {
         weight = new double[weightCount];
         deltaWeight = new double[weightCount];
 
-        Array.set(weight, 0, 0.5);
+        double dx = 1.0 / weightCount;
+
+        Random rand = new Random();
+        rand.setSeed(Instant.now().getEpochSecond());
+
+
+        for (int i = 0; i < weightCount; i++) {
+            weight[i] = dx * rand.nextInt(weightCount);
+            if (rand.nextInt(2) == 0) {
+                weight[i] = -weight[i];
+            }
+        }
         Array.set(deltaWeight, 0, 0.0);
     }
 
@@ -72,5 +85,15 @@ public class NeuralNetNode {
 
     public double getNodeValue() {
         return nodeValue;
+    }
+
+    public void showWeights(String tag) {
+        System.out.print(tag + ": ");
+        if (weight != null) {
+            for (int i = 0; i < weight.length; i++) {
+                System.out.format("%.2f, ", weight[i]);
+            }
+        }
+        System.out.println();
     }
 }
