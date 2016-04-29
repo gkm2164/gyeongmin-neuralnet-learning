@@ -1,45 +1,66 @@
 package co.gyeongmin;
 
 import co.gyeongmin.neuralnet.NeuralNetLearning;
+import co.gyeongmin.nntest.XORFunction;
+import co.gyeongmin.nntest.YX2Function;
 
 public class Main {
 
     public static void main(String[] args) {
-        /*double[][] inputs = { { 0.0, 0.0 }, { 0.0, 1.0 }, { 1.0, 0.0 }, { 1.0, 1.0 } };
-        double[] answer = { 0.0, 1.0, 1.0, 0.0 };*/
+        //xor();
 
-        double[] inputs = { 0.0, 1.0, 5.0, 9.0, 10.0 };
-        double[] answer = { 1.0, 2.0, 3.0, 4.0, 5.0 };
+        XORFunction xorFunction = new XORFunction();
+        YX2Function yx2Function = new YX2Function(5.0);
 
-        NeuralNetLearning neuralNetLearning = new NeuralNetLearning(0.45, 0.9, new int[]{ 10, 10, 10 }, 1, 1);
+        int[][] xorInputSet = { { 0, 0 }, { 0, 1 }, { 1, 0 }, {1 , 1} };
 
-            int iterate = 100000;
-            while (iterate-- > 0) {
-                for (int i = 0; i < inputs.length; i++) {
-                    double scaleInput = toScale(inputs[i], 0.0, 10.0);
-                    double scaleAnswer = toScale(answer[i], 0.0, 5.0);
-                    neuralNetLearning.forward(new double[]{ scaleInput });
-                    neuralNetLearning.backPropagate(new double[]{ scaleAnswer });
-                }
+        for (int i = 0; i < xorInputSet.length; i++) {
+            System.out.println("XOR Value for (" + xorInputSet[i][0] + ", " + xorInputSet[i][1] + ") = "
+                    + xorFunction.xor(xorInputSet[i][0], xorInputSet[i][1]));
+        }
+
+        for (double x = -5.0; x < 5.0; x += 0.1) {
+            System.out.println("f(" + String.format("%.2f", x) + ") = " + String.format("%.2f", yx2Function.run(x)));
+        }
+    }
+
+    /*
+    *  XOR Test Function
+    *
+    * | Input Set | Answer |
+    * |  0  |  0  |   0    |
+    * |  0  |  1  |   1    |
+    * |  1  |  0  |   1    |
+    * |  1  |  1  |   0    |
+    * +-----+-----+--------+
+    *
+    *
+    *
+    *  There is 2 factors, learning Rate, momentum Term.
+    *
+    *  learningRate is the how much should I rely on answers?
+    *  And the momentum Term means how much should I rely on my previous answers?
+    *
+    * */
+    public static void xor() {
+        NeuralNetLearning neuralNetLearning = new NeuralNetLearning(0.45, 0.9, new int[]{ 2, 2, 2 }, 2, 1);
+        double[][] inputs = { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 } };
+        double[] answers = { 0, 1, 1, 0 };
+
+        int iterate = 1000000;
+        while(iterate-- > 0) {
+            for (int i = 0; i < 4; i++) {
+                neuralNetLearning.forward(inputs[i]);
+                neuralNetLearning.backPropagate(new double[]{answers[i]});
             }
+        }
 
-        for (int i = 0; i <= 10; i++) {
-            double scaleInput = toScale(i, 0.0, 10.0);
-            neuralNetLearning.forward(new double[]{ scaleInput });
+        for (int i = 0; i < 4; i++) {
+            neuralNetLearning.forward(inputs[i]);
             double[] retVal = neuralNetLearning.getOutput();
-            //int out = (int)Math.round(retVal[0]);
-            //System.out.println("(" + inputs[i][0] + ", " + inputs[i][1] + ")" + "Return: " + out);
-            System.out.println("f(" + i + ") = " + fromScale(retVal[0], 0.0, 5.0));
+            System.out.println("XOR(" + inputs[i][0] + ", " + inputs[i][1] + ") = " + String.format("%.2f", retVal[0]));
         }
 
         neuralNetLearning.showNetStat();
-    }
-
-    public static double toScale(double value, double min, double max) {
-        return (value - min) / (max - min);
-    }
-
-    public static double fromScale(double value, double min, double max) {
-        return (value * (max - min)) + min;
     }
 }

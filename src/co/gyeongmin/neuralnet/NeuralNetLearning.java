@@ -14,10 +14,13 @@ public class NeuralNetLearning {
     private NeuralNetLayer inputLayer;
     private NeuralNetLayer outputLayer;
 
+    /* Entry functions */
     public NeuralNetLearning(double learningRate, double momentumTerm,
                              int[] hiddenLayerNodes, int numInput, int numOutput) {
         this.learningRate = learningRate;
         this.momentumTerm = momentumTerm;
+
+        /* The layers are connected as doubly linked list. */
 
         inputLayer = new NeuralNetLayer(numInput);
 
@@ -28,6 +31,7 @@ public class NeuralNetLearning {
 
         outputLayer = new NeuralNetLayer(numOutput);
 
+        /* As you can see below, input, hiddens, and output are connected */
         NeuralNetLayer nnlPrev = inputLayer;
         for (int i = 0; i < hiddenLayers.length; i++) {
             hiddenLayers[i].connectPreviousLayer(nnlPrev);

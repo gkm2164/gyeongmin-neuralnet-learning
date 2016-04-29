@@ -14,6 +14,8 @@ public class NeuralNetLayer {
         for (int i = 0; i < numNodes; i++) {
             nodes[i] = new NeuralNetNode(i);
         }
+
+        LayerName.addLayer(this);
     }
 
     public void connectPreviousLayer(NeuralNetLayer previousLayer) {
@@ -76,7 +78,7 @@ public class NeuralNetLayer {
 
     public void showNetStat() {
         for (int i = 0; i < nodes.length; i++) {
-            nodes[i].showWeights(nodes + ", " + i + " :: ");
+            nodes[i].showWeights("Layer #" + LayerName.nnlHashMap.get(this) + ", " + i + " :: ");
         }
 
         if (nextLayer != null) {

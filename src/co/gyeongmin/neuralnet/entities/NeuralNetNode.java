@@ -3,6 +3,7 @@ package co.gyeongmin.neuralnet.entities;
 import java.lang.reflect.Array;
 import java.time.Instant;
 import java.util.Random;
+import java.util.stream.DoubleStream;
 
 /**
  * Created by USER on 2016-04-28.
@@ -22,18 +23,20 @@ public class NeuralNetNode {
         weight = new double[weightCount];
         deltaWeight = new double[weightCount];
 
-        double dx = 1.0 / weightCount;
-
         Random rand = new Random();
         rand.setSeed(Instant.now().getEpochSecond());
 
+        DoubleStream doubleStream = rand.doubles(weightCount);
+
+        double[] stream = doubleStream.toArray();
 
         for (int i = 0; i < weightCount; i++) {
-            weight[i] = dx * rand.nextInt(weightCount);
-            if (rand.nextInt(2) == 0) {
+            weight[i] = stream[i];
+            if (Math.round(rand.nextDouble()) > 0.0) {
                 weight[i] = -weight[i];
             }
         }
+
         Array.set(deltaWeight, 0, 0.0);
     }
 
@@ -60,7 +63,6 @@ public class NeuralNetNode {
         NeuralNetNode[] nodes = nextLayer.getNodes();
 
         double sum = 0.0;
-
         for (NeuralNetNode node : nodes) {
             sum += node.nodeError * node.weight[nodeID];
         }
@@ -69,7 +71,8 @@ public class NeuralNetNode {
         updateWeight(previousLayer, learningRate, momentumTerm);
     }
 
-    private void updateWeight(NeuralNetLayer previousLayer, double learningRate, double momentumTerm) {
+    private void updateWeight(NeuralNetLayer previousLayer,
+                              double learningRate, double momentumTerm) {
         NeuralNetNode[] nodes = previousLayer.getNodes();
 
         for (int i = 0; i < nodes.length; i++) {
