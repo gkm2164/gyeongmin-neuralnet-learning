@@ -24,7 +24,7 @@ public class NeuralNetNode {
         deltaWeight = new double[weightCount];
 
         Random rand = new Random();
-        rand.setSeed(Instant.now().getEpochSecond());
+        //rand.setSeed(Instant.now().getEpochSecond());
 
         DoubleStream doubleStream = rand.doubles(weightCount);
 
