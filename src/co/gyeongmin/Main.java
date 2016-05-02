@@ -20,7 +20,7 @@ public class Main {
         }
 
         for (double x = -5.0; x < 5.0; x += 0.1) {
-            System.out.println("f(" + String.format("%.2f", x) + ") = " + String.format("%.2f", yx2Function.run(x)));
+            System.out.println(String.format("%.2f", x) + "," + String.format("%.2f", yx2Function.run(x)));
         }
     }
 
