@@ -61,7 +61,7 @@ public class Main {
             System.out.println("f(" + String.format("%.2f", x) + ") = " + String.format("%.2f", yx2Function.run(x)));
         }
 
-        OpticalRecognitionFunction orf = new OpticalRecognitionFunction("optical.txt");
+        //OpticalRecognitionFunction orf = new OpticalRecognitionFunction("optical.txt");
 
         byte[][] data = new byte[32][];
 
@@ -80,7 +80,7 @@ public class Main {
             System.out.println();
         }*/
 
-        System.out.println("인식된 값 " + orf.number(data));
+        //System.out.println("인식된 값 " + orf.number(data));
 
     }
 }
