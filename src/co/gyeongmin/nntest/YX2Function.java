@@ -6,7 +6,7 @@ import co.gyeongmin.neuralnet.NeuralNetLearning;
  * Created by USER on 2016-04-29.
  */
 public class YX2Function {
-    private final int ITERATE = 100000;
+    private final int ITERATE = 10000;
 
     private double min;
     private double max;
@@ -27,16 +27,15 @@ public class YX2Function {
         int c = ITERATE;
 
         while (c-- > 0) {
-            double dx = (max - min) / 100;
-            for (int i = 0; i < 100; i++) {
+            double dx = (max - min) / 50;
+            for (int i = 0; i < 50; i++) {
                 double value = dx * i + min;
                 double ret = value * value;
                 double scaledX = (value - min) / (max - min),
-                       scaledY = ret / Math.pow(max, 2);
+                       scaledY = (ret - 0) / (Math.pow(max, 2) - 0);
 
                 tempX[0] = scaledX;
                 tempY[0] = scaledY;
-
                 neuralNetLearning.forward(tempX);
                 neuralNetLearning.backPropagate(tempY);
             }
