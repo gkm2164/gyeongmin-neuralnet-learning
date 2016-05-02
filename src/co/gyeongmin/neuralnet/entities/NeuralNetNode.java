@@ -1,7 +1,6 @@
 package co.gyeongmin.neuralnet.entities;
 
 import java.lang.reflect.Array;
-import java.time.Instant;
 import java.util.Random;
 import java.util.stream.DoubleStream;
 
@@ -24,8 +23,6 @@ public class NeuralNetNode {
         deltaWeight = new double[weightCount];
 
         Random rand = new Random();
-        rand.setSeed(Instant.now().getEpochSecond());
-
         DoubleStream doubleStream = rand.doubles(weightCount);
 
         double[] stream = doubleStream.toArray();

@@ -27,15 +27,16 @@ public class YX2Function {
         int c = ITERATE;
 
         while (c-- > 0) {
-            double dx = (max - min) / 10;
-            for (int i = 0; i < 10; i++) {
+            double dx = (max - min) / 100;
+            for (int i = 0; i < 100; i++) {
                 double value = dx * i + min;
                 double ret = value * value;
                 double scaledX = (value - min) / (max - min),
-                       scaledY = (ret - 0) / (Math.pow(max, 2) - 0);
+                       scaledY = ret / Math.pow(max, 2);
 
                 tempX[0] = scaledX;
                 tempY[0] = scaledY;
+
                 neuralNetLearning.forward(tempX);
                 neuralNetLearning.backPropagate(tempY);
             }
