@@ -3,7 +3,7 @@ package co.gyeongmin.nntest;
 import co.gyeongmin.neuralnet.NeuralNetLearning;
 
 public class YX2Function {
-    private final int ITERATE = 10000;
+    private final int ITERATE = 100000;
 
     private double min;
     private double max;
@@ -14,7 +14,7 @@ public class YX2Function {
         this.min = -max;
         this.max = max;
 
-        neuralNetLearning = new NeuralNetLearning(0.45, 0.9, new int[]{5, 5, 5, 5, 5}, 1, 1);
+        neuralNetLearning = new NeuralNetLearning(0.45, 0.9, new int[]{3, 5, 3}, 1, 1);
         study();
     }
 
@@ -24,8 +24,8 @@ public class YX2Function {
         int c = ITERATE;
 
         while (c-- > 0) {
-            double dx = (max - min) / 80;
-            for (int i = 0; i < 80; i++) {
+            double dx = (max - min) / 100;
+            for (int i = 0; i < 100; i++) {
                 double value = dx * i + min;
                 double ret = value * value;
                 double scaledX = (value - min) / (max - min),

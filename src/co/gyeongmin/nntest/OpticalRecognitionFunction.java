@@ -13,6 +13,9 @@ import java.util.List;
  */
 public class OpticalRecognitionFunction {
 
+    private final double VALUE_MAX = 9.0;
+    private final double VALUE_MIN = 0.0;
+
     private String filename;
     private NeuralNetLearning neuralNetLearning;
     private List<TestSet> testSetList;
@@ -25,7 +28,7 @@ public class OpticalRecognitionFunction {
     }
 
     private void readTestSetList() throws IOException {
-        int iterate = 10000;
+        int iterate = 10;
         BufferedReader br = new BufferedReader(new FileReader(filename));
 
         for (String temp = br.readLine(); iterate-- > 0 && temp != null; temp = br.readLine()) {
@@ -45,28 +48,33 @@ public class OpticalRecognitionFunction {
         }
     }
 
-    void study() throws IOException {
+    private void study() throws IOException {
         readTestSetList();
 
-        for (int i = 0; i < 100; i++) {
+        double range = VALUE_MAX - VALUE_MIN;
+
+        for (int i = 0; i < 10000; i++) {
             testSetList.forEach(ts -> {
                 neuralNetLearning.forward(ts.data);
-                neuralNetLearning.backPropagate(new double[]{(ts.answer / 10.0)});
+                neuralNetLearning.backPropagate(new double[]{(ts.answer - VALUE_MIN) / range});
             });
-            System.out.println ("#" + i + " times studied.");
+
+            if ((i + 1) % 2000 == 0) {
+                System.out.println("#" + (i + 1) + " times studied.");
+            }
         }
     }
 
-    public double areaAverage(byte[][] data, int startX, int startY, int lenX, int lenY) {
+    private double areaAverage(byte[][] data, int startX, int startY, int lenX, int lenY) {
         int size = lenX * lenY;
         double sum = 0.0;
-        for (int i = startX; i < lenX; i++) {
-            for (int j = startY; j < lenY; j++) {
-                sum += data[i][j];
+        for (int i = startX; i < startX + lenX; i++) {
+            for (int j = startY; j < startY + lenY; j++) {
+                sum += data[i][j] - '0';
             }
         }
 
-        return sum / size;
+        return Math.round(sum / size);
     }
 
     public int number(byte[][] data) {
@@ -79,20 +87,18 @@ public class OpticalRecognitionFunction {
                 int jIdx = j / 2;
                 double value = areaAverage(data, i, j, 2, 2);
                 dblData[iIdx * 16 + jIdx] = value;
-
-                System.out.println("Value: " + value);
             }
         }
 
         neuralNetLearning.forward(dblData);
-        return (int)Math.round(neuralNetLearning.getOutput()[0] * 10.0);
+        return (int)Math.round(neuralNetLearning.getOutput()[0] * (VALUE_MAX - VALUE_MIN) + VALUE_MIN);
     }
 
-    class TestSet {
+    private class TestSet {
         private double[] data;
         private int answer;
 
-        public TestSet(String[] lines, int value) {
+        TestSet(String[] lines, int value) {
 
             data = new double[16 * 16];
             saveData(lines);
@@ -108,7 +114,9 @@ public class OpticalRecognitionFunction {
 
             for (int i = 0; i < lines.length; i += 2) {
                 for (int j = 0; j < 32; j += 2) {
-                    data[i / 2 * 16 + j / 2] = areaAverage(tempData, i, j, 2, 2) - '0';
+                    int iidx = i / 2,
+                        jidx = j / 2;
+                    data[iidx * 16 + jidx] = areaAverage(tempData, i, j, 2, 2);
                 }
             }
         }

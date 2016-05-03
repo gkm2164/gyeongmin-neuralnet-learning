@@ -24,8 +24,10 @@ public class NeuralNetLayer {
 
         int numPreviousLayerNode = previousLayer.nodes.length;
 
+        double weightFact = Math.sqrt(6.0 / (numPreviousLayerNode + nodes.length));
+
         for (NeuralNetNode node : nodes) {
-            node.setWeightCount(numPreviousLayerNode);
+            node.setWeightCount(numPreviousLayerNode, -weightFact, weightFact);
         }
     }
 
