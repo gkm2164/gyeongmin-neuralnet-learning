@@ -1,7 +1,6 @@
 package co.gyeongmin.neuralnet.entities;
 
 import java.lang.reflect.Array;
-import java.time.Instant;
 import java.util.Random;
 import java.util.stream.DoubleStream;
 
@@ -36,6 +35,8 @@ public class NeuralNetNode {
                 weight[i] = -weight[i];
             }
         }
+
+        //Array.set(weight, 0, 0.5);
 
         Array.set(deltaWeight, 0, 0.0);
     }
